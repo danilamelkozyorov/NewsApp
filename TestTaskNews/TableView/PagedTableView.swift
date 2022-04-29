@@ -107,3 +107,4 @@ extension PagedTableView: UITableViewDelegate, UIScrollViewDelegate {
         }
     }
 }
+

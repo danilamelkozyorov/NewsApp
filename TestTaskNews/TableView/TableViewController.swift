@@ -34,7 +34,7 @@ class NewsTableViewController: UIViewController, UITableViewDelegate, UITableVie
         view.backgroundColor = .secondarySystemBackground
     }
     
-    
+    //MARK: - configuring TableView
     private func configureTableView() {
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -164,18 +164,18 @@ extension NewsTableViewController: PagedTableViewDelegate {
     }
     
     func tableView(_ tableView: PagedTableView, needsDataForPage page: Int, completion: @escaping (Int, NSError?) -> Void) {
+        let isConnected = NetworkReachabilityManager()?.isReachable ?? false
         if page <= 5 {
             tableView.tableFooterView = nil
-            let isConnected = NetworkReachabilityManager()?.isReachable ?? false
             if isConnected {
                 tableView.tableFooterView = nil
+                if !tableView.isLoading {
+                    tableView.tableFooterView = nil
+                } else {
+                    tableView.tableFooterView = newsLoadingFooter()
+                }
                 viewModel.fetchNews(for: page, completion: { [weak self] news in
                     guard let strongSelf = self else { return }
-                    if tableView.isLoading {
-                        tableView.tableFooterView = strongSelf.newsLoadingFooter()
-                    } else {
-                        tableView.tableFooterView = nil
-                    }
                     strongSelf.news += news
                     strongSelf.tableView.isLoading = false
                     completion(news.count, nil)
@@ -195,3 +195,4 @@ extension NewsTableViewController: PagedTableViewDelegate {
         }
     }
 }
+
