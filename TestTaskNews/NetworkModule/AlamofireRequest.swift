@@ -1,5 +1,5 @@
 //
-//  NewsViewModel.swift
+//  AlamofireRequest.swift
 //  TestTaskNews
 //
 //  Created by Мелкозеров Данила on 26.04.2022.
@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 
-class NewsViewModel {
+class AlamofireRequest {
     
     func fetchNews(for page: Int, completion: @escaping (_ news: [Article]) -> ()) {
         AF.request(getCompleteURL(for: page))

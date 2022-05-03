@@ -17,7 +17,7 @@ class NewsTableViewController: UIViewController, UITableViewDelegate, UITableVie
     
     private var isLoading = false
     
-    let viewModel = NewsViewModel()
+    let request = AlamofireRequest()
     
     var news = [Article]()
     
@@ -109,13 +109,8 @@ class NewsTableViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     @objc private func lostConnectionButtonAction() {
-        viewModel.fetchNews(for: PagedTableView().currentPage) { [weak self] news in
+        request.fetchNews(for: PagedTableView().currentPage) { [weak self] news in
             guard let strongSelf = self else { return }
-            if strongSelf.tableView.isLoading {
-                strongSelf.tableView.tableFooterView = strongSelf.newsLoadingFooter()
-            } else {
-                strongSelf.tableView.tableFooterView = nil
-            }
             strongSelf.news += news
             strongSelf.tableView.isLoading = false
             DispatchQueue.main.async {
@@ -136,10 +131,6 @@ class NewsTableViewController: UIViewController, UITableViewDelegate, UITableVie
         } catch {
             print("Error saving object to Realm: \(error)")
         }
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -174,7 +165,7 @@ extension NewsTableViewController: PagedTableViewDelegate {
                 } else {
                     tableView.tableFooterView = newsLoadingFooter()
                 }
-                viewModel.fetchNews(for: page, completion: { [weak self] news in
+                request.fetchNews(for: page, completion: { [weak self] news in
                     guard let strongSelf = self else { return }
                     strongSelf.news += news
                     strongSelf.tableView.isLoading = false
